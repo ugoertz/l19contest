@@ -1,51 +1,34 @@
-from collections import defaultdict
+from collections import Counter, deque
 
 
-maximum_clique_size = 1
-
-
-def BronKerbosch(R, P, X, listP=None):
+def len_max_increasing_subsequence(n, l):
     """
-    See https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
-
-    Some modifications to avoid recursive calls which cannot give rise to
-    a maximum clique.
-
-    Optionally, can pass listP which is a list containing the elements of the
-    set P; then the iteration over the elements in P will occur in the order of
-    that list. (The idea is that we look at vertices with many neighbors first.)
+    l is a list containing a permutation of 1, ..., n.
+    Returns the maximal length of an increasing subsequence in l.
     """
 
-    global maximum_clique_size
-    if len(P) == len(X) == 0:
-        maximum_clique_size = max(len(R), maximum_clique_size)
-        # print(R)
-    else:
-        listP = listP or list(P)
-        for v in listP:
-            if len(nbs[v]) >= maximum_clique_size:
-                # only follow up on this if there is a chance to find a larger
-                # clique
-                BronKerbosch(R | set([v, ]), nbs[v] & P, nbs[v] & X)
-                P.remove(v)
-                X.add(v)
+    d = [0] * n
+    # at position x, store length of maximal increasing subsequence ending in x
+
+    for i, x in enumerate(l):
+        try:
+            d[x] = 1 + max(d[j] for j in range(x))
+        except ValueError:  # max does not accept empty sequence
+            d[0] = 1
+
+    return max(d)
 
 
-nbs = defaultdict(set)
-num_nbs = defaultdict(int)
+num_smaller_nbs = Counter()
 n, m = [int(x) for x in input().split()]
+
 for i in range(m):
-    a, b = [int(x) for x in input().split()]
-    nbs[a].add(b)
-    nbs[b].add(a)
-    num_nbs[a] += 1
-    num_nbs[b] += 1
+    a, b = input().split()
+    num_smaller_nbs[int(b)-1] += 1
 
-P = set(range(1, n+1))
-listP = [x[1] for x in sorted(
-    ((num_nbs[a], a) for a in P), reverse=True
-    )]
+# find permutation of this permutation graph
+p = deque()
+for i in range(n):
+    p.insert(i-num_smaller_nbs[i], i)
 
-BronKerbosch(set(), P, set(), listP)
-print(maximum_clique_size)
-
+print(len_max_increasing_subsequence(n, reversed(p)))
