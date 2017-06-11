@@ -1,32 +1,34 @@
 from math import gcd
-from functools import lru_cache
-from itertools import groupby
-
-
-@lru_cache(maxsize=None)
-def cachedgcd(t0, t1):
-    return gcd(t0, t1)
 
 
 N = int(input())
 
 for i in range(N):
     n = int(input())
-    a = [int(x) for x in input().split()][:10000]
-    b = [(x[0], len(list(x[1]))) for x in groupby(a)]
+    a = [int(x) for x in input().split()]
 
-    # start with best result for "length 1" subsequence (already taking multiple
-    # equal entries into account)
-    result = max(x[0]*x[1] for x in b)
+    result = max(a)
+    g = a[0]
+    for x in a[1:]:
+        g = gcd(g, x)
+        if g == 1:
+            break
+    result = max(result, g * len(a))
 
-    # now look at longer subsequences
-    bb = b[:]
-    for ll in range(1, len(b)):  # subsequences of length ll+1
-        bbb = []
-        for j in range(len(b)-ll):
-            t = gcd(bb[j][0], bb[j+1][0]), bb[j][1]+b[j+ll][1]
-            result = max(result, t[0]*t[1])
-            bbb.append(t)
-        bb = bbb
+    for i, x in enumerate(a):
+        # Compute r = largest magical gcd of connected subsequences ending at
+        # index i
+
+        r = x
+        g = x
+        for j, y in enumerate(reversed(a[:i])):
+            if g * (i+1) < result:
+                # no chance that going further could help
+                break
+            g = gcd(g, y)
+            r = max(r, g * (j+2))
+
+        result = max(result, r)
+
     print(result)
 
