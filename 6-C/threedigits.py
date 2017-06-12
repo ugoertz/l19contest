@@ -31,7 +31,7 @@ def three_digits_omit25(n):
 
     for i in range(lo, n+1):
         if (i % 2) and (i % 5) and i < limit:
-            # those factors cancel with their inverse mod 1000
+            # those factors altogether multiply to 1 modulo 1000
             continue
 
         while i % 2 == 0:
