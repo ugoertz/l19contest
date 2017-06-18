@@ -4,8 +4,9 @@
 #include <map>
 #include <string>
 
+using namespace std;
 const int LIMIT = 1000000007;
-std::map<std::pair<int, int>, int> cache;
+map<string, int> cache;
 
 unsigned long long pow2limit(int i) {
   if (i==0) return 1;
@@ -17,7 +18,8 @@ int num_palindromes(char* s, int start, int end) {
   // printf("%s %d-%d\n", s, start, end);
   if (start >= end) return 0;
 
-  auto it = cache.find(std::make_pair(start, end));
+  string ss(s+start, end-start);
+  auto it = cache.find(ss);
   if (it != cache.end()) return it->second;
 
   unsigned long long result;
@@ -42,7 +44,7 @@ int num_palindromes(char* s, int start, int end) {
   }
 
   // printf("%s %d-%d, %d\n", s, start, end, result);
-  cache[std::make_pair(start, end)] = result % LIMIT;
+  cache[ss] = result % LIMIT;
   return result % LIMIT;
 }
 

@@ -7,20 +7,27 @@ LIMIT = 10**9 + 7
 
 
 @lru_cache(maxsize=None)
-def num_palindromes(s):
-    if all(s[i] == s[0] for i in range(1, len(s))):
-        return 2**len(s) - 1
+def num_palindromes(start, end):
+    global s
+    # print(s[start:end], start, end)
+    if all(s[i] == s[start] for i in range(start + 1, end)):
+        #  print(s[start:end], start, end, end=' ')
+        #  print(2**(end-start) - 1, 'D')
+        return 2**(end-start) - 1
 
-    result = num_palindromes(s[1:]) + 1  # +1 for just first letter
-    pos = s.rfind(s[0], 1, len(s))
+    result = num_palindromes(start+1, end) + 1  # +1 for just first letter
+    pos = s.rfind(s[start], start+1, end)
     while pos != -1:
-        result += num_palindromes(s[1:pos]) + 1  # +1 for empty middle
-        pos = s.rfind(s[0], 1, pos)
+        result += num_palindromes(start+1, pos) + 1  # +1 for empty middle
+        pos = s.rfind(s[start], start+1, pos)
 
+    #  print(s[start:end], start, end, end=' ')
+    #  print(result)
     return result % LIMIT
 
 
 for _ in range(int(input())):
     s = input().strip()
-    print(num_palindromes(s))
+    print(num_palindromes(0, len(s)))
+    num_palindromes.cache_clear()
 

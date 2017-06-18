@@ -1,4 +1,5 @@
 from math import gcd
+from itertools import groupby
 
 
 N = int(input())
@@ -7,12 +8,13 @@ for i in range(N):
     n = int(input())
     a = [int(x) for x in input().split()]
 
-    result = max(a)
+    result = max(x[0] * len(list(x[1])) for x in groupby(a))
+
     g = a[0]
-    for x in a[1:]:
-        g = gcd(g, x)
+    for x, _ in groupby(a):
         if g == 1:
             break
+        g = gcd(g, x)
     result = max(result, g * len(a))
 
     for i, x in enumerate(a):
