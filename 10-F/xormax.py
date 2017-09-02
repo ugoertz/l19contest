@@ -9,6 +9,7 @@ for xx in input().split():
             a ^= d[f]
         except KeyError:
             d[f] = a
+            break
 
 result = 0
 for f in range(60, 0, -1):
@@ -16,7 +17,4 @@ for f in range(60, 0, -1):
         result = max(result, result ^ d[f])
     except KeyError:
         pass
-
 print(result)
-
-
